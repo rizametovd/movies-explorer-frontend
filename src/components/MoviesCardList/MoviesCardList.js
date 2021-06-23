@@ -1,22 +1,143 @@
 import MoviesCard from '../MoviesCard/MoviesCard';
 import './MoviesCardList.css';
-// import Preloader from '../Preloader/Preloader';
+import Preloader from '../Preloader/Preloader';
+import { useCallback, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
-function MoviesCardList() {
+import { TABLET_RESOLUTION, MAX_MOVIES_TO_RENDER, MOVIES_PAGE } from '../../utils/constants';
+import { NO_SHORT_MOVIES_RESULTS } from '../../utils/responseMessages';
+import { filterShortMovies } from '../../utils/helperFunctions';
+
+function MoviesCardList({
+  moviesSearchResults,
+  loader,
+  noResultsToShow,
+  noResultsMessage,
+  handleSaveMovie,
+  savedMoviesList,
+  savedMoviesSearchResults,
+  errorMessage,
+  shortMovieFilter,
+}) {
+  let location = useLocation();
+  const [showMoreBtn, setShowMoreBtn] = useState(false);
+  const [moviesToRender, setMoviesToRender] = useState(0);
+  const [userScreenResolution, setUserScreenResolution] = useState(window.innerWidth);
+
+  function screenResize() {
+    setTimeout(() => {
+      setUserScreenResolution(window.innerWidth);
+    }, 1000);
+  }
+
+  useEffect(() => {
+    screenResize();
+    window.addEventListener('resize', screenResize);
+
+    return () => {
+      window.removeEventListener('resize', screenResize);
+    };
+  }, []);
+
+  function showMoreMoviesOnClick(moviesList) {
+    if (moviesList.length > moviesToRender && userScreenResolution < TABLET_RESOLUTION) {
+      setMoviesToRender(moviesToRender + MAX_MOVIES_TO_RENDER.mobile);
+    } else {
+      setMoviesToRender(moviesToRender + MAX_MOVIES_TO_RENDER.tablet);
+    }
+  }
+
+  useEffect(() => {
+    function movieToRenderQuantity(moviesList) {
+      moviesList && userScreenResolution < TABLET_RESOLUTION
+        ? setMoviesToRender(MAX_MOVIES_TO_RENDER.mobile)
+        : setMoviesToRender(MAX_MOVIES_TO_RENDER.tablet);
+    }
+    movieToRenderQuantity(moviesSearchResults);
+  }, [moviesSearchResults, userScreenResolution, location.pathname]);
+
+  const renderMoreButton = useCallback(
+    (moviesList, moviesData) => {
+      if (!shortMovieFilter) {
+        moviesList.length <= moviesToRender ? setShowMoreBtn(false) : setShowMoreBtn(true);
+      } else {
+        moviesData.length <= moviesToRender ? setShowMoreBtn(false) : setShowMoreBtn(true);
+      }
+    },
+    [moviesToRender, shortMovieFilter]
+  );
+
+  const moviesData = arrangeMoviesForRender(
+    moviesSearchResults,
+    savedMoviesSearchResults,
+    savedMoviesList
+  );
+
+  useEffect(() => {
+    if (location.pathname === MOVIES_PAGE) {
+      renderMoreButton(moviesSearchResults, moviesData);
+    }
+  }, [moviesSearchResults, moviesToRender, location.pathname, renderMoreButton, moviesData]);
+
+  function arrangeMoviesForRender(moviesSearchResults, savedMoviesSearchResults, savedMoviesList) {
+    if (!shortMovieFilter) {
+      return location.pathname === MOVIES_PAGE
+        ? moviesSearchResults.slice(0, moviesToRender) || []
+        : savedMoviesSearchResults.length > 0
+        ? savedMoviesSearchResults
+        : savedMoviesList;
+    } else {
+      return location.pathname === MOVIES_PAGE
+        ? filterShortMovies(moviesSearchResults).slice(0, moviesToRender) || []
+        : savedMoviesSearchResults.length > 0
+        ? filterShortMovies(savedMoviesSearchResults)
+        : filterShortMovies(savedMoviesList);
+    }
+  }
   return (
     <section className='movies-card'>
-        {/* <Preloader /> */}
-      <div className='movies-card__no-search-results movies-card__no-search-results_hidden'>
-        <p className='movies-card__no-search-results-text'>Ничего не нашлось. Попробуйте заново.</p>
-      </div>
+      {loader && <Preloader />}
+
+      {shortMovieFilter && moviesData.length === 0 && (
+        <div className='movies-card__no-search-results'>
+          <p className='movies-card__no-search-results-text'>{NO_SHORT_MOVIES_RESULTS}</p>
+        </div>
+      )}
+
+      {noResultsToShow && !shortMovieFilter && (
+        <div className='movies-card__no-search-results'>
+          <p className='movies-card__no-search-results-text'>{noResultsMessage}</p>
+        </div>
+      )}
+
+      {errorMessage && (
+        <div className='movies-card__no-search-results'>
+          <p className='movies-card__no-search-results-text'>{errorMessage}</p>
+        </div>
+      )}
 
       <div className='movies-card__list-container movies-card__list-container_hidden'>
         <ul className='movies-card__list'>
-          <MoviesCard />
+          {!loader &&
+            !noResultsToShow &&
+            moviesData.map((movie) => (
+              <MoviesCard
+                key={movie.id || movie._id}
+                movieCard={movie}
+                handleSaveMovie={handleSaveMovie}
+                savedMoviesList={savedMoviesList}
+              />
+            ))}
         </ul>
-        <button className='movies-card__show-more-btn link' type='button'>
-          Ещё
-        </button>
+        {showMoreBtn && !loader && (
+          <button
+            className='movies-card__show-more-btn link'
+            type='button'
+            onClick={showMoreMoviesOnClick}
+          >
+            Ещё
+          </button>
+        )}
       </div>
     </section>
   );

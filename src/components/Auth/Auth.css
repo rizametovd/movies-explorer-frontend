@@ -1,3 +1,8 @@
+.auth {
+  display: flex;
+  flex-grow: 1;
+}
+
 .auth__form {
   width: 260px;
   padding: 50px 0 0;
@@ -58,6 +63,11 @@
   color: #ee3465;
 }
 
+.auth__error-message {
+  color: #ee3465;
+  text-align: center;
+}
+
 .auth__input-error-text {
   display: inline-block;
   font-size: 10px;
@@ -79,6 +89,13 @@
   border: none;
   border-radius: 3px;
   padding: 14px 0;
+  cursor: pointer;
+}
+
+.auth__submit-button:disabled {
+  background-color: #dddcdc;
+  color: #8b8b8b;
+  cursor: default;
 }
 
 .auth__text {

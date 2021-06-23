@@ -1,9 +1,13 @@
 import Auth from '../Auth/Auth';
+import { useFormWithValidation } from '../../hooks/useFormWithValidation';
+import { SIGNIN_PAGE, SIGNUP_PAGE } from '../../utils/constants';
 
-function Login({ onLogin }) {
+function Login({ onLogin, errorMessage }) {
+  const { inputValues, handleChange, errors, isValid } = useFormWithValidation();
+
   function handleSubmit(e) {
     e.preventDefault();
-    onLogin();
+    onLogin(inputValues);
   }
 
   return (
@@ -13,9 +17,11 @@ function Login({ onLogin }) {
       handleSubmit={handleSubmit}
       text='Еще не зарегистрированы?'
       linkText='Регистрация'
-      linkTo='/signup'
-      path='/signin'
+      linkTo={SIGNUP_PAGE}
+      path={SIGNIN_PAGE}
       className='auth__container_signin'
+      isDisabled={!isValid}
+      errorMessage={errorMessage}
     >
       <label className='auth__label'>
         <p className='auth__input-title'>E-mail</p>
@@ -23,33 +29,35 @@ function Login({ onLogin }) {
           id='email__input'
           type='email'
           name='email'
+          value={inputValues.email || ''}
           placeholder='E-mail'
           className='auth__field'
           minLength='1'
           maxLength='40'
           required
-          // onChange={handleAddEmail}
+          onChange={handleChange}
         />
-        <span id='auth__input-error' className='auth__input-error-text auth__input-err_hidden'>
-          Что-то пошло не так...
+        <span id='auth__input-error' className='auth__input-error-text'>
+          {errors.email}
         </span>
       </label>
+
       <label className='auth__label'>
         <p className='auth__input-title'>Пароль</p>
         <input
           id='password__input'
           type='password'
           name='password'
-          defaultValue=''
+          value={inputValues.password || ''}
           placeholder='Пароль'
           className='auth__field auth__input-error'
-          minLength='2'
-          maxLength='200'
+          minLength='3'
+          maxLength='20'
           required
-          // onChange={handleAddPassword}
+          onChange={handleChange}
         />
-        <span id='auth__input-error' className='auth__input-error-text auth__input-err_hidden'>
-          Что-то пошло не так...
+        <span id='auth__input-error' className='auth__input-error-text'>
+          {errors.password}
         </span>
       </label>
     </Auth>

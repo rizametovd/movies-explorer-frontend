@@ -1,9 +1,13 @@
 import Auth from '../Auth/Auth';
+import { useFormWithValidation } from '../../hooks/useFormWithValidation';
+import { SIGNIN_PAGE, SIGNUP_PAGE } from '../../utils/constants';
 
-function Register({ onRegister }) {
+function Register({ onRegister, errorMessage }) {
+  const { inputValues, handleChange, errors, isValid } = useFormWithValidation();
+
   function handleSubmit(e) {
     e.preventDefault();
-    onRegister();
+    onRegister(inputValues);
   }
 
   return (
@@ -13,8 +17,10 @@ function Register({ onRegister }) {
       handleSubmit={handleSubmit}
       text='Уже зарегистрированы?'
       linkText='Войти'
-      linkTo='/signin'
-      path='/signup'
+      linkTo={SIGNIN_PAGE}
+      path={SIGNUP_PAGE}
+      isDisabled={!isValid}
+      errorMessage={errorMessage}
     >
       <label className='auth__label'>
         <p className='auth__input-title'>Имя</p>
@@ -22,16 +28,16 @@ function Register({ onRegister }) {
           id='name__input'
           type='text'
           name='name'
-          defaultValue=''
+          value={inputValues.name || ''}
           placeholder='Как вас зовут?'
           className='auth__field'
           minLength='2'
           maxLength='200'
           required
-          // onChange={handleAddPassword}
+          onChange={handleChange}
         />
-        <span id='auth__input-error' className='auth__input-error-text auth__input-err_hidden'>
-          Что-то пошло не так...
+        <span id='auth__input-error' className='auth__input-error-text'>
+          {errors.name}
         </span>
       </label>
 
@@ -41,15 +47,16 @@ function Register({ onRegister }) {
           id='email__input'
           type='email'
           name='email'
+          value={inputValues.email || ''}
           placeholder='E-mail'
           className='auth__field'
           minLength='1'
           maxLength='40'
           required
-          // onChange={handleAddEmail}
+          onChange={handleChange}
         />
-        <span id='auth__input-error' className='auth__input-error-text auth__input-err_hidden'>
-          Что-то пошло не так...
+        <span id='auth__input-error' className='auth__input-error-text'>
+          {errors.email}
         </span>
       </label>
       <label className='auth__label'>
@@ -58,16 +65,16 @@ function Register({ onRegister }) {
           id='password__input'
           type='password'
           name='password'
-          defaultValue=''
+          value={inputValues.password || ''}
           placeholder='Пароль'
           className='auth__field auth__input-error'
-          minLength='2'
-          maxLength='200'
+          minLength='3'
+          maxLength='20'
           required
-          // onChange={handleAddPassword}
+          onChange={handleChange}
         />
         <span id='auth__input-error' className='auth__input-error-text'>
-          Что-то пошло не так...
+          {errors.password}
         </span>
       </label>
     </Auth>

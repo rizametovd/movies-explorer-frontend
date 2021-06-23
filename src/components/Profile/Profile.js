@@ -1,17 +1,26 @@
 import './Profile.css';
-import { useHistory } from 'react-router-dom';
+import { useContext } from 'react';
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
+import { useFormWithValidation } from '../../hooks/useFormWithValidation';
 
-function Profile() {
-  const history = useHistory();
+function Profile({ updateUserProfile, onSignOut }) {
+  const { inputValues, handleChange, errors, isValid } = useFormWithValidation();
+  const { name, email } = useContext(CurrentUserContext);
 
-  function onSignOut() {
-    history.push('/signin');
+  function handleSubmit(e) {
+    e.preventDefault();
+    const userData = { name: inputValues.name || name, email: inputValues.email || email };
+    updateUserProfile(userData);
+  }
+
+  function handleSignOut() {
+    onSignOut();
   }
 
   return (
     <section className='profile'>
-      <form className='profile__form'>
-        <h2 className='profile__title'>Привет, Виталий!</h2>
+      <form className='profile__form' onSubmit={handleSubmit} noValidate>
+        <h2 className='profile__title'>{`Привет, ${name}!`}</h2>
         <div className='profile__container'>
           <label className='profile__label'>
             <div className='profile__label-container'>
@@ -20,21 +29,18 @@ function Profile() {
                 id='name__input'
                 type='text'
                 name='name'
+                defaultValue={name || ''}
                 placeholder='Изменить имя'
-                defaultValue='Виталий'
                 className='profile__field'
                 minLength='2'
                 maxLength='200'
                 required
-                // onChange={handleAddPassword}
+                onChange={handleChange}
               />
             </div>
 
-            <span
-              id='profile__input-error'
-              className='profile__input-error-text profile__input-err_hidden'
-            >
-              Что-то пошло не так...
+            <span id='profile__input-error' className='profile__input-error-text'>
+              {errors.name}
             </span>
           </label>
 
@@ -45,29 +51,26 @@ function Profile() {
                 id='email__input'
                 type='email'
                 name='email'
+                defaultValue={email}
                 placeholder='Изменить E-mail'
-                defaultValue='pochta@yandex.ru'
                 className='profile__field'
                 minLength='1'
                 maxLength='40'
                 required
-                // onChange={handleAddEmail}
+                onChange={handleChange}
               />
             </div>
 
-            <span
-              id='profile__input-error'
-              className='profile__input-error-text profile__input-err_hidden'
-            >
-              Что-то пошло не так...
+            <span id='profile__input-error' className='profile__input-error-text'>
+              {errors.email}
             </span>
           </label>
         </div>
-        <button className='profile__edit-button link' type='submit'>
+        <button className='profile__edit-button link' type='submit' disabled={!isValid}>
           Редактировать
         </button>
 
-        <button className='profile__signout-btn link' type='button' onClick={onSignOut}>
+        <button className='profile__signout-btn link' type='button' onClick={handleSignOut}>
           Выйти из аккаунта
         </button>
       </form>
