@@ -87,7 +87,7 @@
   .search__form-input {
     font-size: 28px;
     line-height: 34px;
-    padding: 0 21.35px 0 0;
+    padding: 0 21.35px 0 5px;
   }
 
   .search__input-error {

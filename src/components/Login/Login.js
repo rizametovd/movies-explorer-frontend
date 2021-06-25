@@ -1,8 +1,9 @@
 import Auth from '../Auth/Auth';
 import { useFormWithValidation } from '../../hooks/useFormWithValidation';
 import { SIGNIN_PAGE, SIGNUP_PAGE } from '../../utils/constants';
+import Preloader from '../Preloader/Preloader';
 
-function Login({ onLogin, errorMessage }) {
+function Login({ onLogin, errorMessage, loader }) {
   const { inputValues, handleChange, errors, isValid } = useFormWithValidation();
 
   function handleSubmit(e) {
@@ -23,6 +24,7 @@ function Login({ onLogin, errorMessage }) {
       isDisabled={!isValid}
       errorMessage={errorMessage}
     >
+      {loader && <Preloader />}
       <label className='auth__label'>
         <p className='auth__input-title'>E-mail</p>
         <input

@@ -19,7 +19,7 @@ function MoviesCardList({
   errorMessage,
   shortMovieFilter,
 }) {
-  let location = useLocation();
+  const location = useLocation();
   const [showMoreBtn, setShowMoreBtn] = useState(false);
   const [moviesToRender, setMoviesToRender] = useState(0);
   const [userScreenResolution, setUserScreenResolution] = useState(window.innerWidth);
@@ -39,8 +39,8 @@ function MoviesCardList({
     };
   }, []);
 
-  function showMoreMoviesOnClick(moviesList) {
-    if (moviesList.length > moviesToRender && userScreenResolution < TABLET_RESOLUTION) {
+  function showMoreMoviesOnClick() {
+    if (moviesSearchResults.length > moviesToRender && userScreenResolution < TABLET_RESOLUTION) {
       setMoviesToRender(moviesToRender + MAX_MOVIES_TO_RENDER.mobile);
     } else {
       setMoviesToRender(moviesToRender + MAX_MOVIES_TO_RENDER.tablet);
@@ -98,19 +98,25 @@ function MoviesCardList({
     <section className='movies-card'>
       {loader && <Preloader />}
 
-      {shortMovieFilter && moviesData.length === 0 && (
+      {shortMovieFilter && !loader && moviesData.length === 0 && (
         <div className='movies-card__no-search-results'>
           <p className='movies-card__no-search-results-text'>{NO_SHORT_MOVIES_RESULTS}</p>
         </div>
       )}
 
-      {noResultsToShow && !shortMovieFilter && (
+      {!loader && shortMovieFilter && noResultsToShow && (
+        <div className='movies-card__no-search-results'>
+          <p className='movies-card__no-search-results-text'>{NO_SHORT_MOVIES_RESULTS}</p>
+        </div>
+      )}
+
+      {!loader && noResultsToShow && !shortMovieFilter && (
         <div className='movies-card__no-search-results'>
           <p className='movies-card__no-search-results-text'>{noResultsMessage}</p>
         </div>
       )}
 
-      {errorMessage && (
+      {!loader && errorMessage && (
         <div className='movies-card__no-search-results'>
           <p className='movies-card__no-search-results-text'>{errorMessage}</p>
         </div>

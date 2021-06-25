@@ -5,7 +5,7 @@ import Navigation from '../Navigation/Navigation';
 import { MAIN_PAGE, SIGNIN_PAGE, SIGNUP_PAGE } from '../../utils/constants';
 
 function Header({ loggedIn }) {
-  let location = useLocation();
+  const location = useLocation();
 
   return (
     <header

@@ -1,8 +1,9 @@
 import Auth from '../Auth/Auth';
 import { useFormWithValidation } from '../../hooks/useFormWithValidation';
 import { SIGNIN_PAGE, SIGNUP_PAGE } from '../../utils/constants';
+import Preloader from '../Preloader/Preloader';
 
-function Register({ onRegister, errorMessage }) {
+function Register({ onRegister, errorMessage, loader }) {
   const { inputValues, handleChange, errors, isValid } = useFormWithValidation();
 
   function handleSubmit(e) {
@@ -22,6 +23,7 @@ function Register({ onRegister, errorMessage }) {
       isDisabled={!isValid}
       errorMessage={errorMessage}
     >
+      {loader && <Preloader />}
       <label className='auth__label'>
         <p className='auth__input-title'>Имя</p>
         <input

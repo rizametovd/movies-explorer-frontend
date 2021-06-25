@@ -1,6 +1,7 @@
 .profile {
   display: flex;
   flex-grow: 1;
+  position: relative;
 }
 
 .profile__form {
@@ -9,6 +10,7 @@
   flex-direction: column;
   padding: 70px 30px 0;
   margin: 0 auto;
+  
 }
 
 .profile__title {

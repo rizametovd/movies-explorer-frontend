@@ -21,19 +21,19 @@ export const updateUserProfileApi = ({ name, email }) => {
   });
 };
 
-export const getUserInfo = () => {
-  return fetch(`${BASE_URL}/users/me`, {
-    method: 'GET',
-    'credentials': 'include',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    }
-  })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    } 
-      return Promise.reject(SERVER_ERROR);
-  })
-}
+// export const getUserInfo = () => {
+//   return fetch(`${BASE_URL}/users/me`, {
+//     method: 'GET',
+//     'credentials': 'include',
+//     headers: {
+//       Accept: 'application/json',
+//       'Content-Type': 'application/json',
+//     }
+//   })
+//   .then(res => {
+//     if (res.ok) {
+//       return res.json();
+//     } 
+//       return Promise.reject(SERVER_ERROR);
+//   })
+// }

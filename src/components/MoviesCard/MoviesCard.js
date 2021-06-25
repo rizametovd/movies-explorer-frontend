@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 function MoviesCard({ movieCard, handleSaveMovie, savedMoviesList }) {
-  let location = useLocation();
+  const location = useLocation();
 
   const { nameRU, trailerLink, image, duration } = movieCard;
   const [movieIsSaved, setMovieIsSaved] = useState(false);

@@ -6,7 +6,7 @@ import './App.css';
 import { useHistory, Route, Switch, useLocation, Redirect } from 'react-router-dom';
 import Login from '../Login/Login';
 import InfoTooltip from '../InfoTooltip/InfoTooltip';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import PageNotFound from '../PageNotFound/PageNotFound';
 import Movies from '../Movies/Movies';
 import SavedMovies from '../SavedMovies/SavedMovies';
@@ -39,7 +39,7 @@ import {
 
 function App() {
   const history = useHistory();
-  let location = useLocation();
+  const location = useLocation();
   const [tooltipStatus, setTooltipStatus] = useState(false);
   const [tooltipMessage, setTooltipMessage] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -54,6 +54,15 @@ function App() {
 
   function toggleShortMovieFilter() {
     setShortMovieFilter((prevState) => !prevState);
+
+    setLoader((prevLoaderState) => {
+      showLoader(true);
+
+      setTimeout(() => {
+        showLoader(false);
+      }, 300);
+      return !prevLoaderState;
+    });
   }
 
   function onRegister({ name, email, password }) {
@@ -75,6 +84,7 @@ function App() {
   }
 
   function onLogin({ email, password }) {
+    showLoader(true);
     auth
       .login({ email, password })
       .then(({ _id }) => {
@@ -83,39 +93,52 @@ function App() {
           setLoggedIn(true);
           setTooltipStatus(SUCCESS_STATUS);
           setTooltipMessage(SUCCESS_AUTHORIZATION);
-          history.push(MOVIES_PAGE);
         }
       })
       .catch((err) => {
         setErrorMessage(err);
         console.log('Ошибка:', err);
+      })
+      .finally(() => {
+        setTimeout(() => {
+          showLoader(false);
+        }, 400);
       });
   }
 
-  useEffect(() => {
+  const checkUserId = useCallback(() => {
     const userId = localStorage.getItem('userId');
 
     if (userId) {
       auth
         .getContent(userId)
-        .then(({ _id }) => {
+        .then(({ _id, email, name }) => {
           if (_id) {
             setLoggedIn(true);
+            setCurrentUser({ name, email });
           }
         })
         .catch((err) => {
           console.log(err);
           localStorage.removeItem('userId');
-          history.push('/');
+          localStorage.removeItem('moviesList');
+          localStorage.removeItem('searchResults');
+          setSearchResults([]);
+          setSavedMoviesList([]);
+          setSavedMoviesSearchResults([]);
+          setLoggedIn(false);
         });
     }
-  }, [history]);
+  }, []);
+
+  useEffect(() => {
+    checkUserId();
+  }, [loggedIn, checkUserId]);
 
   useEffect(() => {
     if (loggedIn) {
-      Promise.all([UserApi.getUserInfo(), getSaveMovies()])
-        .then(([{ _, email, name }, savedMoviesList]) => {
-          setCurrentUser({ name, email });
+      getSaveMovies()
+        .then((savedMoviesList) => {
           setSavedMoviesList(savedMoviesList);
         })
         .catch((err) => console.log(err));
@@ -242,11 +265,17 @@ function App() {
   function updateUserProfile(formData) {
     UserApi.updateUserProfileApi(formData)
       .then((formData) => {
-        setTooltipStatus(SUCCESS_STATUS);
-        setTooltipMessage(USER_DATA_SUCCESSFULLY_UPDATED);
+        showLoader(true);
         setCurrentUser(formData);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => {
+        setTimeout(() => {
+          showLoader(false);
+          setTooltipStatus(SUCCESS_STATUS);
+          setTooltipMessage(USER_DATA_SUCCESSFULLY_UPDATED);
+        }, 400);
+      });
   }
 
   useEffect(() => {
@@ -276,7 +305,7 @@ function App() {
             {loggedIn ? (
               <Redirect to={MOVIES_PAGE} />
             ) : (
-              <Register onRegister={onRegister} errorMessage={errorMessage} />
+              <Register onRegister={onRegister} errorMessage={errorMessage} loader={loader} />
             )}
           </Route>
 
@@ -284,60 +313,55 @@ function App() {
             {loggedIn ? (
               <Redirect to={MOVIES_PAGE} />
             ) : (
-              <Login onLogin={onLogin} errorMessage={errorMessage} />
+              <Login onLogin={onLogin} errorMessage={errorMessage} loader={loader} />
             )}
           </Route>
 
-          {loggedIn && (
-            <ProtectedRoute
-              path={MOVIES_PAGE}
-              loggedIn={loggedIn}
-              component={Movies}
-              handleSearchClick={handleSearchClick}
-              loader={loader}
-              noResultsToShow={noResults}
-              noResultsMessage={NO_SEARCH_RESULTS}
-              handleSaveMovie={handleSaveMovie}
-              savedMoviesList={savedMoviesList}
-              moviesSearchResults={searchResults || []}
-              errorMessage={errorMessage}
-              toggleShortMovieFilter={toggleShortMovieFilter}
-              shortMovieFilter={shortMovieFilter}
-            />
-          )}
+          <ProtectedRoute
+            path={MOVIES_PAGE}
+            loggedIn={loggedIn}
+            component={Movies}
+            handleSearchClick={handleSearchClick}
+            loader={loader}
+            noResultsToShow={noResults}
+            noResultsMessage={NO_SEARCH_RESULTS}
+            handleSaveMovie={handleSaveMovie}
+            savedMoviesList={savedMoviesList}
+            moviesSearchResults={searchResults || []}
+            errorMessage={errorMessage}
+            toggleShortMovieFilter={toggleShortMovieFilter}
+            shortMovieFilter={shortMovieFilter}
+          />
 
-          {loggedIn && (
-            <ProtectedRoute
-              path={SAVED_MOVIES_PAGE}
-              loggedIn={loggedIn}
-              component={SavedMovies}
-              loader={loader}
-              handleSaveMovie={handleRemoveMovie}
-              handleSearchClick={handleSearchClick}
-              savedMoviesList={savedMoviesList}
-              savedMoviesSearchResults={savedMoviesSearchResults || []}
-              noResultsToShow={noResults}
-              noResultsMessage={NO_SEARCH_RESULTS}
-              toggleShortMovieFilter={toggleShortMovieFilter}
-              shortMovieFilter={shortMovieFilter}
-            />
-          )}
+          <ProtectedRoute
+            path={SAVED_MOVIES_PAGE}
+            loggedIn={loggedIn}
+            component={SavedMovies}
+            loader={loader}
+            handleSaveMovie={handleRemoveMovie}
+            handleSearchClick={handleSearchClick}
+            savedMoviesList={savedMoviesList}
+            savedMoviesSearchResults={savedMoviesSearchResults || []}
+            noResultsToShow={noResults}
+            noResultsMessage={NO_SEARCH_RESULTS}
+            toggleShortMovieFilter={toggleShortMovieFilter}
+            shortMovieFilter={shortMovieFilter}
+          />
 
-          {loggedIn && (
-            <ProtectedRoute
-              path={PROFILE_PAGE}
-              loggedIn={loggedIn}
-              component={Profile}
-              updateUserProfile={updateUserProfile}
-              onSignOut={onSignOut}
-            />
-          )}
+          <ProtectedRoute
+            path={PROFILE_PAGE}
+            loggedIn={loggedIn}
+            component={Profile}
+            updateUserProfile={updateUserProfile}
+            onSignOut={onSignOut}
+            loader={loader}
+          />
 
-          {loggedIn && (
-            <Route path={NOT_FOUND_PAGE}>
-              <PageNotFound goBack={goBack} />
-            </Route>
-          )}
+          <ProtectedRoute path={NOT_FOUND_PAGE} component={PageNotFound} goBack={goBack} />
+
+          <Route exact path={MAIN_PAGE}>
+            {loggedIn ? <Redirect to={MOVIES_PAGE} /> : <Redirect to={MAIN_PAGE} />}
+          </Route>
         </Switch>
         <Footer />
 

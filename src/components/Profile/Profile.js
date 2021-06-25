@@ -1,9 +1,10 @@
 import './Profile.css';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import { useFormWithValidation } from '../../hooks/useFormWithValidation';
+import Preloader from '../Preloader/Preloader';
 
-function Profile({ updateUserProfile, onSignOut }) {
+function Profile({ updateUserProfile, onSignOut, loader }) {
   const { inputValues, handleChange, errors, isValid } = useFormWithValidation();
   const { name, email } = useContext(CurrentUserContext);
 
@@ -11,6 +12,21 @@ function Profile({ updateUserProfile, onSignOut }) {
     e.preventDefault();
     const userData = { name: inputValues.name || name, email: inputValues.email || email };
     updateUserProfile(userData);
+    setNoNameChanges(true);
+    setNoEmailChanges(true);
+  }
+
+  const [noNameChanges, setNoNameChanges] = useState(true);
+  const [noEmailChanges, setNoEmailChanges] = useState(true);
+
+  function checkNameChange(e) {
+    handleChange(e);
+    name === e.target.value ? setNoNameChanges(true) : setNoNameChanges(false);
+  }
+
+  function checkEmailChange(e) {
+    handleChange(e);
+    email === e.target.value ? setNoEmailChanges(true) : setNoEmailChanges(false);
   }
 
   function handleSignOut() {
@@ -19,6 +35,7 @@ function Profile({ updateUserProfile, onSignOut }) {
 
   return (
     <section className='profile'>
+      {loader && <Preloader />}
       <form className='profile__form' onSubmit={handleSubmit} noValidate>
         <h2 className='profile__title'>{`Привет, ${name}!`}</h2>
         <div className='profile__container'>
@@ -35,7 +52,7 @@ function Profile({ updateUserProfile, onSignOut }) {
                 minLength='2'
                 maxLength='200'
                 required
-                onChange={handleChange}
+                onChange={checkNameChange}
               />
             </div>
 
@@ -51,13 +68,13 @@ function Profile({ updateUserProfile, onSignOut }) {
                 id='email__input'
                 type='email'
                 name='email'
-                defaultValue={email}
+                defaultValue={email || ''}
                 placeholder='Изменить E-mail'
                 className='profile__field'
                 minLength='1'
                 maxLength='40'
                 required
-                onChange={handleChange}
+                onChange={checkEmailChange}
               />
             </div>
 
@@ -66,7 +83,11 @@ function Profile({ updateUserProfile, onSignOut }) {
             </span>
           </label>
         </div>
-        <button className='profile__edit-button link' type='submit' disabled={!isValid}>
+        <button
+          className='profile__edit-button link'
+          type='submit'
+          disabled={!isValid || (noNameChanges && noEmailChanges)}
+        >
           Редактировать
         </button>
 
