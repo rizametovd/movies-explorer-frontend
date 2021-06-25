@@ -84,6 +84,8 @@ function App() {
   }
 
   function onLogin({ email, password }) {
+    setErrorMessage('')
+    
     showLoader(true);
     auth
       .login({ email, password })
@@ -96,8 +98,10 @@ function App() {
         }
       })
       .catch((err) => {
-        setErrorMessage(err);
+        setTimeout(() => {
+          setErrorMessage(err);
         console.log('Ошибка:', err);
+        }, 400);
       })
       .finally(() => {
         setTimeout(() => {
