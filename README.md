@@ -1,16 +1,16 @@
 # Movie Explorer
 
-![React](https://img.shields.io/badge/-React-fa0404?logo=react&logoColor=black)
-![JavaScript](https://img.shields.io/badge/-JavaScript-fa0404?logo=javaScript&logoColor=white)
-![HTML5](https://img.shields.io/badge/-HTML5-fa0404?logo=html5&logoColor=black)
-![CSS3](https://img.shields.io/badge/-CSS3-fa0404?logo=css3&logoColor=black)
-![Webpack](https://img.shields.io/badge/-Webpack-fa0404?logo=webpack&logoColor=black)
+![React](https://img.shields.io/badge/-React-61daf8?logo=react&logoColor=black)
+![HTML5](https://img.shields.io/badge/-HTML5-e34f26?logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/-CSS3-1572b6?logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/-JavaScript-f7df1e?logo=javaScript&logoColor=black)
+![Webpack](https://img.shields.io/badge/-Webpack-99d6f8?logo=webpack&logoColor=black)
 
 ## Описание
 SPA приложение в котором можно найти фильмы по запросу и сохранить в личном кабинете.</br>
 
-Адрес: https://movie-explorer.nomoredomains.icu </br>
-Ссылка на макет: https://www.figma.com/file/7jQirDuKKvdokilmqY6mOl/Diploma?node-id=891%3A3857
+[Ссылка на макет Figma](https://www.figma.com/file/7jQirDuKKvdokilmqY6mOl/Diploma?node-id=891%3A3857)</br>
+[Код бэкенд части приложения](https://github.com/rizametovd/movies-explorer-api)
 
 ## Задача
 * Сделать адаптивную верстку
@@ -19,7 +19,7 @@ SPA приложение в котором можно найти фильмы п
 * Валидировать формы
 
 ## Логика
-* При авторизации уходят GET запросы за данными сохраненных фильмов и информации о пользователе.
+* При авторизации уходят GET запросы за данными о сохраненных фильмах и информации о пользователе.
 * Клик по кнопке Найти отправляет GET запрос за данными на сервер. Данные записываются в LS — далее поиск фильмов происходит в LS.
 * На роуте /movies, клик на иконке сердца добавляет фильм на страницу Сохраненные фильмы — по клику на иконку уходит POST запрос, данные сохраняются на сервере.
 * На роуте /saved-movies, клик по крестику удаляет фильм из сохраненных.
