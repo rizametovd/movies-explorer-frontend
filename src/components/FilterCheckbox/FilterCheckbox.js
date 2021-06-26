@@ -1,14 +1,6 @@
-import { useState } from 'react';
 import './FilterCheckbox.css';
 
-function FilterCheckbox() {
-  const [toggle, setToggle] = useState(false);
-  console.log(toggle);
-
-  function toggleCheckBox() {
-    setToggle((prevState) => !prevState);
-  }
-
+function FilterCheckbox({ toggleShortMovieFilter }) {
   return (
     <div className='filter-checkbox'>
       <p className='filter-checkbox__text'>Короткометражки</p>
@@ -17,7 +9,7 @@ function FilterCheckbox() {
           className='filter-checkbox__input'
           type='checkbox'
           id='toggle'
-          onChange={toggleCheckBox}
+          onChange={toggleShortMovieFilter}
         />
         <span className='filter-checkbox__input-visible'></span>
       </label>

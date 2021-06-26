@@ -1,3 +1,8 @@
+import {
+  GITHUB_PROJECT_RESPONSIVE_PAGE,
+  GITHUB_PROJECT_SPA_PAGE,
+  GITHUB_PROJECT_STATIC_PAGE,
+} from '../../utils/constants';
 import './Portfolio.css';
 
 function Portfolio() {
@@ -8,7 +13,7 @@ function Portfolio() {
         <li className='portfolio__list-item'>
           <a
             className='portfolio__list-item-link link'
-            href='https://github.com/rizametovd/how-to-learn'
+            href={GITHUB_PROJECT_STATIC_PAGE}
             target='_blank'
             rel='noreferrer'
           >
@@ -19,7 +24,7 @@ function Portfolio() {
         <li className='portfolio__list-item'>
           <a
             className='portfolio__list-item-link link'
-            href='https://github.com/rizametovd/russian-travel'
+            href={GITHUB_PROJECT_RESPONSIVE_PAGE}
             target='_blank'
             rel='noreferrer'
           >
@@ -30,7 +35,7 @@ function Portfolio() {
         <li className='portfolio__list-item'>
           <a
             className='portfolio__list-item-link link'
-            href='https://github.com/rizametovd/react-mesto-auth'
+            href={GITHUB_PROJECT_SPA_PAGE}
             target='_blank'
             rel='noreferrer'
           >

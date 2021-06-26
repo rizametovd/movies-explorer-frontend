@@ -1,3 +1,8 @@
+import {
+  USER_FACEBOOK_PROFILE_PAGE,
+  USER_GITHUB_PROFILE_PAGE,
+  YANDEX_PRACTIKUM_PAGE,
+} from '../../utils/constants';
 import './Footer.css';
 
 function Footer() {
@@ -10,7 +15,7 @@ function Footer() {
           <li className='footer__links-list-item'>
             <a
               className='footer__link link'
-              href='https://praktikum.yandex.ru/'
+              href={YANDEX_PRACTIKUM_PAGE}
               target='_blank'
               rel='noreferrer'
             >
@@ -20,7 +25,7 @@ function Footer() {
           <li className='footer__links-list-item'>
             <a
               className='footer__link link'
-              href='https://github.com/rizametovd'
+              href={USER_GITHUB_PROFILE_PAGE}
               target='_blank'
               rel='noreferrer'
             >
@@ -30,7 +35,7 @@ function Footer() {
           <li className='footer__links-list-item'>
             <a
               className='footer__link link'
-              href='https://www.facebook.com/rizametov'
+              href={USER_FACEBOOK_PROFILE_PAGE}
               target='_blank'
               rel='noreferrer'
             >

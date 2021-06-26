@@ -21,6 +21,7 @@
 .card__img {
   display: block;
   width: 100%;
+  min-height: 122px;
 }
 
 .card__container {

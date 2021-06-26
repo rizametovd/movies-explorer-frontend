@@ -1,5 +1,6 @@
 import './AboutMe.css';
 import myPhoto from '../../images/myphoto.jpg';
+import { USER_FACEBOOK_PROFILE_PAGE, USER_GITHUB_PROFILE_PAGE } from '../../utils/constants';
 
 function AboutMe() {
   return (
@@ -22,7 +23,7 @@ function AboutMe() {
             <li className='about-me__social-links-list-item'>
               <a
                 className='about-me__social-link'
-                href='https://www.facebook.com/rizametov'
+                href={USER_FACEBOOK_PROFILE_PAGE}
                 target='_blank'
                 rel='noreferrer'
               >
@@ -33,7 +34,7 @@ function AboutMe() {
             <li className='about-me__social-links-list-item'>
               <a
                 className='about-me__social-link'
-                href='https://github.com/rizametovd'
+                href={USER_GITHUB_PROFILE_PAGE}
                 target='_blank'
                 rel='noreferrer'
               >
