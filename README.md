@@ -9,6 +9,7 @@
 ## Описание
 SPA приложение в котором можно найти фильмы по запросу и сохранить в личном кабинете.</br>
 
+Деплой: [Movies Explorer](https://movies-explorer.rizametov.com/)</br>
 [Ссылка на макет Figma](https://www.figma.com/file/7jQirDuKKvdokilmqY6mOl/Diploma?node-id=891%3A3857)</br>
 [Код бэкенд части приложения](https://github.com/rizametovd/movies-explorer-api)
 
